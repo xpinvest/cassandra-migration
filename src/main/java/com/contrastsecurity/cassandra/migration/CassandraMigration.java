@@ -18,8 +18,6 @@ import com.datastax.driver.core.Host;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.List;
 
 public class CassandraMigration {
@@ -110,8 +108,7 @@ public class CassandraMigration {
     }
     
     public void baseline() {
-        //TODO
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("TODO");
     }
 
     private String getConnectionInfo(Metadata metadata) {

@@ -1,11 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd http://www.w3.org/2001/XMLSchema-instance ">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.elo7</groupId>
+    <groupId>cz.xpgroup</groupId>
     <artifactId>cassandra-migration</artifactId>
-    <name>Cassandra Migration</name>
+    <name>XP Cassandra Migration</name>
     <version>0.12-SNAPSHOT</version>
-    <description>
-        Database migration tool for Cassandra forked from https://github.com/Contrast-Security-OSS/cassandra-migration v0.9
+    <description>Database migration tool for Cassandra forked from https://github.com/elo7/cassandra-migration/
     </description>
     <url>https://github.com/elo7/cassandra-migration</url>
 
@@ -19,8 +18,8 @@
     <packaging>jar</packaging>
 
     <organization>
-        <name>Elo7</name>
-        <url>elo7.com</url>
+        <name>XP group, a.s.</name>
+        <url>https://xpgroup.cz/</url>
     </organization>
 
     <distributionManagement>
@@ -55,8 +54,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -81,7 +80,7 @@
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>3.0.0</version>
+            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -104,7 +103,7 @@
         <dependency>
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
-            <version>2.1.9.2</version>
+            <version>3.3.0.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
