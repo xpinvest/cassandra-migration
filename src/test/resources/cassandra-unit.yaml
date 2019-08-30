@@ -584,3 +584,8 @@ server_encryption_options:
     # algorithm: SunX509
     # store_type: JKS
     # cipher_suites: [TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA]
+
+# The cassandra.storagedir :
+# https://github.com/lesfurets/cassandra-unit/blob/f1c623fa1b9d51cd33de9c323bc59d29c0d50ff4/cassandra-unit/src/main/resources/cu-cassandra-rndport.yaml    
+# TODO.popa: The parameter is never used in Cassandra 3.4.0
+cdc_raw_directory: target/embeddedCassandra/cdc

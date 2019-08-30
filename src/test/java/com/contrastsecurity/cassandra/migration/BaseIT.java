@@ -22,12 +22,27 @@ public abstract class BaseIT {
 
     @BeforeClass
     public static void beforeSuite() throws Exception {
-        // Set before creating CassandraCQLUnit:
-        System.setProperty("cassandra.storagedir", "/tmp/cassandra" + System.nanoTime());
+        setupCassandraStorageDir();
         EmbeddedCassandraServerHelper.startEmbeddedCassandra(
                 "cassandra-unit.yaml",
                 "target/embeddedCassandra",
                 200000L);
+    }
+
+    /** Set before creating CassandraCQLUnit or set the configuration: 
+     * File cassandra-unit.yamp -> cdc_raw_directory: target/embeddedCassandra/cdc
+     */
+    private static void setupCassandraStorageDir() {
+        if (!false) {
+            String dir = Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResource("")
+                    .getFile() 
+                    + "cassandra-" 
+                    + System.nanoTime();
+
+            System.setProperty("cassandra.storagedir", dir);            
+        }
     }
 
     @AfterClass
