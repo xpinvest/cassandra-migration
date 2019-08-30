@@ -22,6 +22,8 @@ public abstract class BaseIT {
 
     @BeforeClass
     public static void beforeSuite() throws Exception {
+        // Set before creating CassandraCQLUnit:
+        System.setProperty("cassandra.storagedir", "/tmp/cassandra" + System.nanoTime());
         EmbeddedCassandraServerHelper.startEmbeddedCassandra(
                 "cassandra-unit.yaml",
                 "target/embeddedCassandra",
