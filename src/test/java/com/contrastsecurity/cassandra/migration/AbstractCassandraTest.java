@@ -1,9 +1,12 @@
 package com.contrastsecurity.cassandra.migration;
 
+import ch.qos.logback.core.util.Duration;
+import com.datastax.driver.core.Cluster.Builder;
 import com.contrastsecurity.cassandra.migration.config.Keyspace;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.Statement;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.After;
@@ -11,7 +14,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-public abstract class BaseIT {
+public abstract class AbstractCassandraTest {
+    
+    private static final Duration TIMEOUT = Duration.buildByMinutes(10);
+    
     public static final String CASSANDRA__KEYSPACE = "cassandra_migration_test";
     public static final String CASSANDRA_CONTACT_POINT = "localhost";
     public static final int CASSANDRA_PORT = 9147;
@@ -26,7 +32,7 @@ public abstract class BaseIT {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra(
                 "cassandra-unit.yaml",
                 "target/embeddedCassandra",
-                200000L);
+                TIMEOUT.getMilliseconds());
     }
 
     /** Set before creating CassandraCQLUnit or set the configuration: 
@@ -80,15 +86,29 @@ public abstract class BaseIT {
     private Session getSession(Keyspace keyspace) {
         if (session != null && !session.isClosed())
             return session;
-
-        com.datastax.driver.core.Cluster.Builder builder = new com.datastax.driver.core.Cluster.Builder();
-        builder.addContactPoints(CASSANDRA_CONTACT_POINT).withPort(CASSANDRA_PORT);
-        builder.withCredentials(keyspace.getCluster().getUsername(), keyspace.getCluster().getPassword());
+        
+        Builder builder = new Builder()
+                .addContactPoints(CASSANDRA_CONTACT_POINT)
+                .withPort(CASSANDRA_PORT)
+                .withSocketOptions(createSocketOption(TIMEOUT))
+                ;
+        builder.withCredentials
+                ( keyspace.getCluster().getUsername()
+                , keyspace.getCluster().getPassword());
         Cluster cluster = builder.build();
         session = cluster.connect();
         return session;
     }
 
+    /** Configure socket options */
+    private SocketOptions createSocketOption(Duration timeout) {
+        SocketOptions options = new SocketOptions();
+        options.setConnectTimeoutMillis((int) timeout.getMilliseconds());
+        options.setReadTimeoutMillis((int) timeout.getMilliseconds());
+        options.setTcpNoDelay(true);
+        return options;
+    }
+    
     protected Session getSession() {
         return session;
     }

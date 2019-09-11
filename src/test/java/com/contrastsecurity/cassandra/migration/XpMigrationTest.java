@@ -2,12 +2,9 @@ package com.contrastsecurity.cassandra.migration;
 
 import com.contrastsecurity.cassandra.migration.config.Keyspace;
 import com.datastax.driver.core.Session;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.Test;
 
-public class XpMigrationTest extends BaseIT {
-
-    private final Class xx = EmbeddedCassandraServerHelper.class;
+public class XpMigrationTest extends AbstractCassandraTest {
 
     /**
      * Test of init method, of class FlywayServiceImpl.

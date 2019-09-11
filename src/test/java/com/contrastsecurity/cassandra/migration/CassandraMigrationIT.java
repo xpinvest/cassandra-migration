@@ -19,7 +19,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class CassandraMigrationIT extends BaseIT {
+public class CassandraMigrationIT extends AbstractCassandraTest {
 
 	@Test
 	public void runApiTest() {
@@ -185,11 +185,11 @@ public class CassandraMigrationIT extends BaseIT {
 	public void runCmdTest() throws IOException, InterruptedException {
 		String shell = "java -jar"
 				+ " -Dcassandra.migration.scripts.locations=filesystem:target/test-classes/migration/integ"
-				+ " -Dcassandra.migration.cluster.contactpoints=" + BaseIT.CASSANDRA_CONTACT_POINT
-				+ " -Dcassandra.migration.cluster.port=" + BaseIT.CASSANDRA_PORT
-				+ " -Dcassandra.migration.cluster.username=" + BaseIT.CASSANDRA_USERNAME
-				+ " -Dcassandra.migration.cluster.password=" + BaseIT.CASSANDRA_PASSWORD
-				+ " -Dcassandra.migration.keyspace.name=" + BaseIT.CASSANDRA__KEYSPACE
+				+ " -Dcassandra.migration.cluster.contactpoints=" + AbstractCassandraTest.CASSANDRA_CONTACT_POINT
+				+ " -Dcassandra.migration.cluster.port=" + AbstractCassandraTest.CASSANDRA_PORT
+				+ " -Dcassandra.migration.cluster.username=" + AbstractCassandraTest.CASSANDRA_USERNAME
+				+ " -Dcassandra.migration.cluster.password=" + AbstractCassandraTest.CASSANDRA_PASSWORD
+				+ " -Dcassandra.migration.keyspace.name=" + AbstractCassandraTest.CASSANDRA__KEYSPACE
 				+ " target/*-jar-with-dependencies.jar" + " migrate";
 		ProcessBuilder builder;
 		if (isWindows()) {
