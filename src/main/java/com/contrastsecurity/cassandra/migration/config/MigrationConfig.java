@@ -3,7 +3,7 @@ package com.contrastsecurity.cassandra.migration.config;
 import com.contrastsecurity.cassandra.migration.info.MigrationVersion;
 import com.contrastsecurity.cassandra.migration.utils.StringUtils;
 
-public class MigrationConfigs {
+public class MigrationConfig {
     final static String PREFIX = "cassandra.migration.";
     final static String ENV_PREFIX = "CASSANDRA_MIGRATION_";
     public enum MigrationProperty {
@@ -35,7 +35,7 @@ public class MigrationConfigs {
         }
     }
 
-    public MigrationConfigs() {
+    public MigrationConfig() {
         String scriptsEncodingP = PropertyGetter.getProperty(MigrationProperty.SCRIPTS_ENCODING.getName(), MigrationProperty.SCRIPTS_ENCODING.getEnvName());
         if (null != scriptsEncodingP && scriptsEncodingP.trim().length() != 0)
             this.encoding = scriptsEncodingP;

@@ -8,13 +8,13 @@ import static org.hamcrest.Matchers.*;
 public class KeyspaceTest {
     @Test
     public void shouldDefaultToNoKeyspaceButCanBeOverridden() {
-        assertThat(new Keyspace().getName(), is(nullValue()));
-        System.setProperty(Keyspace.KeyspaceProperty.NAME.getName(), "myspace");
-        assertThat(new Keyspace().getName(), is("myspace"));
+        assertThat(new KeyspaceConfig().getName(), is(nullValue()));
+        System.setProperty(KeyspaceConfig.KeyspaceProperty.NAME.getName(), "myspace");
+        assertThat(new KeyspaceConfig().getName(), is("myspace"));
     }
 
     @Test
     public void shouldHaveDefaultClusterObject() {
-        assertThat(new Keyspace().getCluster(), is(notNullValue()));
+        assertThat(new KeyspaceConfig().getCluster(), is(notNullValue()));
     }
 }

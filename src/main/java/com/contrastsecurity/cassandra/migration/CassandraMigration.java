@@ -3,8 +3,8 @@ package com.contrastsecurity.cassandra.migration;
 import com.contrastsecurity.cassandra.migration.action.Initialize;
 import com.contrastsecurity.cassandra.migration.action.Migrate;
 import com.contrastsecurity.cassandra.migration.action.Validate;
-import com.contrastsecurity.cassandra.migration.config.Keyspace;
-import com.contrastsecurity.cassandra.migration.config.MigrationConfigs;
+import com.contrastsecurity.cassandra.migration.config.KeyspaceConfig;
+import com.contrastsecurity.cassandra.migration.config.MigrationConfig;
 import com.contrastsecurity.cassandra.migration.config.ScriptsLocations;
 import com.contrastsecurity.cassandra.migration.dao.SchemaVersionDAO;
 import com.contrastsecurity.cassandra.migration.info.MigrationInfoService;
@@ -27,12 +27,12 @@ public class CassandraMigration {
     private static final Log LOG = LogFactory.getLog(CassandraMigration.class);
 
     private ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    private Keyspace keyspace;
-    private MigrationConfigs configs;
+    private KeyspaceConfig keyspace;
+    private MigrationConfig configs;
 
     public CassandraMigration() {
-        this.keyspace = new Keyspace();
-        this.configs = new MigrationConfigs();
+        this.keyspace = new KeyspaceConfig();
+        this.configs = new MigrationConfig();
     }
 
     public ClassLoader getClassLoader() {
@@ -48,15 +48,15 @@ public class CassandraMigration {
         this.classLoader = classLoader;
     }
 
-    public Keyspace getKeyspace() {
+    public KeyspaceConfig getKeyspace() {
         return keyspace;
     }
 
-    public void setKeyspace(Keyspace keyspace) {
+    public void setKeyspace(KeyspaceConfig keyspace) {
         this.keyspace = keyspace;
     }
 
-    public MigrationConfigs getConfigs() {
+    public MigrationConfig getConfigs() {
         return configs;
     }
 
@@ -143,7 +143,7 @@ public class CassandraMigration {
             if (null == keyspace.getCluster())
                 throw new IllegalArgumentException("Unable to establish Cassandra session. Cluster is not configured.");
 
-            cluster = createCassandraCluster();
+            cluster = createCluster();
 
             Metadata metadata = cluster.getMetadata();
             LOG.info(getConnectionInfo(metadata));
@@ -196,7 +196,8 @@ public class CassandraMigration {
         }
     }
 
-    protected Cluster createCassandraCluster() throws IllegalArgumentException {
+    /** Override the method to provide a user cluster. */
+    protected Cluster createCluster() throws IllegalArgumentException {
         return createBuilder().build();
     }
 

@@ -1,6 +1,6 @@
 package com.contrastsecurity.cassandra.migration.config;
 
-public class Cluster {
+public class ClusterConfig {
     private static final String PROPERTY_PREFIX = "cassandra.migration.cluster.";
     private static final String ENV_PREFIX = "CASSANDRA_MIGRATION_CLUSTER_";
 
@@ -38,7 +38,7 @@ public class Cluster {
     private String username;
     private String password;
 
-    public Cluster() {
+    public ClusterConfig() {
         String contactpointsP = PropertyGetter.getProperty(ClusterProperty.CONTACTPOINTS.getName(), ClusterProperty.CONTACTPOINTS.getEnvName());
         if (null != contactpointsP && contactpointsP.trim().length() != 0)
             this.contactpoints = contactpointsP.replaceAll("\\s+", "").split("[,]");

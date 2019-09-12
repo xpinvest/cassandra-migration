@@ -1,6 +1,6 @@
 package com.contrastsecurity.cassandra.migration.dao;
 
-import com.contrastsecurity.cassandra.migration.config.Keyspace;
+import com.contrastsecurity.cassandra.migration.config.KeyspaceConfig;
 import com.contrastsecurity.cassandra.migration.config.MigrationType;
 import com.contrastsecurity.cassandra.migration.info.AppliedMigration;
 import com.contrastsecurity.cassandra.migration.info.MigrationVersion;
@@ -25,12 +25,12 @@ public class SchemaVersionDAO {
     private static final String COUNTS_TABLE_NAME_SUFFIX = "_counts";
 
     private Session session;
-    private Keyspace keyspace;
+    private KeyspaceConfig keyspace;
     private String tableName;
     private CachePrepareStatement cachePs;
     private ConsistencyLevel consistencyLevel;
 
-    public SchemaVersionDAO(Session session, Keyspace keyspace, String tableName) {
+    public SchemaVersionDAO(Session session, KeyspaceConfig keyspace, String tableName) {
         this.session = session;
         this.keyspace = keyspace;
         this.tableName = tableName;
@@ -40,7 +40,7 @@ public class SchemaVersionDAO {
                 session.getCluster().getMetadata().getAllHosts().size() > 1 ? ConsistencyLevel.ALL :  ConsistencyLevel.ONE;
     }
 
-    public Keyspace getKeyspace() {
+    public KeyspaceConfig getKeyspace() {
         return this.keyspace;
     }
 

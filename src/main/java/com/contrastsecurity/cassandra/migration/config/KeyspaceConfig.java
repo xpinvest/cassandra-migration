@@ -1,15 +1,16 @@
 package com.contrastsecurity.cassandra.migration.config;
 
-public class Keyspace {
+public class KeyspaceConfig {
     private static final String PROPERTY_PREFIX = "cassandra.migration.keyspace.";
     private static final String ENV_PREFIX = "CASSANDRA_MIGRATION_KEYSPACE_";
 
     public enum KeyspaceProperty {
+        /** Singleton */
         NAME(PROPERTY_PREFIX + "name", ENV_PREFIX + "NAME", "Name of Cassandra keyspace");
 
-        private String name;
-        private String envName;
-        private String description;
+        private final String name;
+        private final String envName;
+        private final String description;
 
         KeyspaceProperty(String name, String envName, String description) {
             this.name = name;
@@ -30,21 +31,23 @@ public class Keyspace {
         }
     }
 
-    private Cluster cluster;
+    private ClusterConfig cluster;
     private String name;
 
-    public Keyspace() {
-        cluster = new Cluster();
+    public KeyspaceConfig() {
+        cluster = new ClusterConfig();
         String keyspaceP = PropertyGetter.getProperty(KeyspaceProperty.NAME.getName(), KeyspaceProperty.NAME.getEnvName());
-        if (null != keyspaceP && keyspaceP.trim().length() != 0)
+        
+        if (keyspaceP != null
+        && !keyspaceP.trim().isEmpty())
             this.name = keyspaceP;
     }
 
-    public Cluster getCluster() {
+    public ClusterConfig getCluster() {
         return cluster;
     }
 
-    public void setCluster(Cluster cluster) {
+    public void setCluster(ClusterConfig cluster) {
         this.cluster = cluster;
     }
 

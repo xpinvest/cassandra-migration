@@ -2,7 +2,7 @@ package com.contrastsecurity.cassandra.migration;
 
 import ch.qos.logback.core.util.Duration;
 import com.datastax.driver.core.Cluster.Builder;
-import com.contrastsecurity.cassandra.migration.config.Keyspace;
+import com.contrastsecurity.cassandra.migration.config.KeyspaceConfig;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SimpleStatement;
@@ -73,8 +73,8 @@ public abstract class AbstractCassandraTest {
         getSession(getKeyspace()).execute(statement);
     }
 
-    protected Keyspace getKeyspace() {
-        Keyspace ks = new Keyspace();
+    protected KeyspaceConfig getKeyspace() {
+        KeyspaceConfig ks = new KeyspaceConfig();
         ks.setName(CASSANDRA__KEYSPACE);
         ks.getCluster().setContactpoints(CASSANDRA_CONTACT_POINT);
         ks.getCluster().setPort(CASSANDRA_PORT);
@@ -83,7 +83,7 @@ public abstract class AbstractCassandraTest {
         return ks;
     }
 
-    private Session getSession(Keyspace keyspace) {
+    private Session getSession(KeyspaceConfig keyspace) {
         if (session != null && !session.isClosed())
             return session;
         

@@ -1,6 +1,6 @@
 package com.contrastsecurity.cassandra.migration;
 
-import com.contrastsecurity.cassandra.migration.config.Keyspace;
+import com.contrastsecurity.cassandra.migration.config.KeyspaceConfig;
 import com.datastax.driver.core.Session;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class XpMigrationTest extends AbstractCassandraTest {
     public void migrate() {
         String[] scriptsLocations = {"migration/integ", "migration/integ/java"};
 
-        Keyspace keyspace = getKeyspace();
+        KeyspaceConfig keyspace = getKeyspace();
         CassandraMigration cm = new CassandraMigration();
         cm.getConfigs().setScriptsLocations(scriptsLocations);
         cm.setKeyspace(keyspace);

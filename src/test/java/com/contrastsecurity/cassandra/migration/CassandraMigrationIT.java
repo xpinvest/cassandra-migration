@@ -205,7 +205,7 @@ public class CassandraMigrationIT extends AbstractCassandraTest {
 		while (!runCmdTestCompleted)
 			Thread.sleep(1000L);
 
-		assertThat(runCmdTestSuccess, is(true));
+		assertThat(runCmdTestSuccess, is(true)); // TODO.pop
 	}
 
 	private static void watch(final Process process) {
