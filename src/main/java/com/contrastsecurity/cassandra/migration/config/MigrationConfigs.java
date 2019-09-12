@@ -61,7 +61,7 @@ public class MigrationConfigs {
     private String encoding = "UTF-8";
 
     /**
-     * Locations of the migration scripts in CSV format (default: db/migration)
+     * Locations of the migration scripts --in CSV format-- (default: db/migration)
      */
     private String[] scriptsLocations = {"db/migration"};
 
@@ -87,7 +87,7 @@ public class MigrationConfigs {
         return scriptsLocations;
     }
 
-    public void setScriptsLocations(String[] scriptsLocations) {
+    public void setScriptsLocations(String... scriptsLocations) {
         this.scriptsLocations = scriptsLocations;
     }
 

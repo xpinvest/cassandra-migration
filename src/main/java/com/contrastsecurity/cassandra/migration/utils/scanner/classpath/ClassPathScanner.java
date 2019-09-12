@@ -236,8 +236,9 @@ public class ClassPathScanner {
         Set<String> filteredResourceNames = new TreeSet<String>();
         for (String resourceName : resourceNames) {
             String fileName = resourceName.substring(resourceName.lastIndexOf("/") + 1);
-            if (fileName.startsWith(prefix) && fileName.endsWith(suffix)
-                    && (fileName.length() > (prefix + suffix).length())) {
+            if (fileName.startsWith(prefix) 
+            &&  fileName.endsWith(suffix)
+            && (fileName.length() > (prefix + suffix).length())) {
                 filteredResourceNames.add(resourceName);
             } else {
                 LOG.debug("Filtering out resource: " + resourceName + " (filename: " + fileName + ")");

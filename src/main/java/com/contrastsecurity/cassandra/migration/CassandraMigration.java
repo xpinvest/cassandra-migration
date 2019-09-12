@@ -14,11 +14,13 @@ import com.contrastsecurity.cassandra.migration.logging.LogFactory;
 import com.contrastsecurity.cassandra.migration.resolver.CompositeMigrationResolver;
 import com.contrastsecurity.cassandra.migration.resolver.MigrationResolver;
 import com.contrastsecurity.cassandra.migration.utils.VersionPrinter;
+import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class CassandraMigration {
 
@@ -63,17 +65,23 @@ public class CassandraMigration {
     }
 
     public int migrate() {
-        return execute(new Action<Integer>() {
-            public Integer execute(Session session) {
-                new Initialize().run(session, keyspace, MigrationVersion.CURRENT.getTable());
-
-                MigrationResolver migrationResolver = createMigrationResolver();
-                SchemaVersionDAO schemaVersionDAO = new SchemaVersionDAO(session, keyspace, MigrationVersion.CURRENT.getTable());
-                Migrate migrate = new Migrate(migrationResolver, configs.getTarget(), schemaVersionDAO, session,
-                        keyspace.getCluster().getUsername(), configs.isAllowOutOfOrder());
-
-                return migrate.run();
-            }
+        return execute((Session session) -> {
+            new Initialize().run(session, keyspace, MigrationVersion.CURRENT.getTable());
+            
+            MigrationResolver migrationResolver = createMigrationResolver();
+            SchemaVersionDAO schemaVersionDAO = new SchemaVersionDAO
+                    ( session
+                    , keyspace
+                    , MigrationVersion.CURRENT.getTable());
+            Migrate migrate = new Migrate
+                    ( migrationResolver
+                    , configs.getTarget()
+                    , schemaVersionDAO
+                    , session
+                    , keyspace.getCluster().getUsername()
+                    , configs.isAllowOutOfOrder());
+            
+            return migrate.run();
         });
     }
 
@@ -139,49 +147,76 @@ public class CassandraMigration {
             if (null == keyspace.getCluster())
                 throw new IllegalArgumentException("Unable to establish Cassandra session. Cluster is not configured.");
 
-            com.datastax.driver.core.Cluster.Builder builder = new com.datastax.driver.core.Cluster.Builder();
-            builder.addContactPoints(keyspace.getCluster().getContactpoints()).withPort(keyspace.getCluster().getPort());
-            if (null != keyspace.getCluster().getUsername() && !keyspace.getCluster().getUsername().trim().isEmpty()) {
-                if (null != keyspace.getCluster().getPassword() && !keyspace.getCluster().getPassword().trim().isEmpty()) {
-                    builder.withCredentials(keyspace.getCluster().getUsername(),
-                            keyspace.getCluster().getPassword());
-                } else {
-                    throw new IllegalArgumentException("Password must be provided with username.");
-                }
-            }
-            cluster = builder.build();
+            cluster = createCassandraCluster();
 
             Metadata metadata = cluster.getMetadata();
             LOG.info(getConnectionInfo(metadata));
 
             session = cluster.newSession();
-            if (null == keyspace.getName() || keyspace.getName().trim().length() == 0)
+            if (keyspace.getName() == null
+            ||  keyspace.getName().trim().isEmpty())
                 throw new IllegalArgumentException("Keyspace not specified.");
+            
             List<KeyspaceMetadata> keyspaces = metadata.getKeyspaces();
             boolean keyspaceExists = false;
             for (KeyspaceMetadata keyspaceMetadata : keyspaces) {
                 if (keyspaceMetadata.getName().equalsIgnoreCase(keyspace.getName()))
                     keyspaceExists = true;
             }
-            if (keyspaceExists)
+            
+            if (keyspaceExists) {
                 session.execute("USE " + keyspace.getName());
-            else
+            } else {
                 throw new CassandraMigrationException("Keyspace: " + keyspace.getName() + " does not exist.");
+            }
 
             result = action.execute(session);
         } finally {
-            if (null != session && !session.isClosed())
-                try {
-                    session.close();
-                } catch(Exception e) {
-                    LOG.warn("Error closing Cassandra session");
-                }
-            if (null != cluster && !cluster.isClosed())
-                try {
-                    cluster.close();
-                } catch(Exception e) {
-                    LOG.warn("Error closing Cassandra cluster");
-                }
+            closeSession(session);
+            closeCluster(cluster);
+        }
+        return result;
+    }
+
+    /** Close the cluster */
+    protected void closeCluster(@Nullable Cluster cluster) {
+        if (null != cluster && !cluster.isClosed()) {
+            try {
+                cluster.close();
+            } catch (Exception e) {
+                LOG.warn("Error closing Cassandra cluster");
+            }
+        }
+    }
+
+    /** Close the session */
+    protected void closeSession(@Nullable Session session) {
+        if (null != session && !session.isClosed()) {
+            try {
+                session.close();
+            } catch(Exception e) {
+                LOG.warn("Error closing Cassandra session");
+            }
+        }
+    }
+
+    protected Cluster createCassandraCluster() throws IllegalArgumentException {
+        return createBuilder().build();
+    }
+
+    private Cluster.Builder createBuilder() throws IllegalArgumentException {
+        com.datastax.driver.core.Cluster.Builder result = new com.datastax.driver.core.Cluster.Builder();
+        result.addContactPoints(keyspace.getCluster().getContactpoints()).withPort(keyspace.getCluster().getPort());
+        if (keyspace.getCluster().getUsername() != null
+        && !keyspace.getCluster().getUsername().trim().isEmpty()) {
+            if (keyspace.getCluster().getPassword() != null
+            && !keyspace.getCluster().getPassword().trim().isEmpty()) {
+                result.withCredentials(
+                        keyspace.getCluster().getUsername(),
+                        keyspace.getCluster().getPassword());
+            } else {
+                throw new IllegalArgumentException("Password must be provided with username.");
+            }
         }
         return result;
     }

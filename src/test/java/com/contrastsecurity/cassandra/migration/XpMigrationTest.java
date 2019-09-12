@@ -13,6 +13,7 @@ public class XpMigrationTest extends AbstractCassandraTest {
     public void testAfterInit() {
         migrate();
 
+        // TODO: Make a test:
         Session session = super.getSession();
     }
 
