@@ -69,10 +69,7 @@ public class CassandraMigration {
             new Initialize().run(session, keyspace, MigrationVersion.CURRENT.getTable());
             
             MigrationResolver migrationResolver = createMigrationResolver();
-            SchemaVersionDAO schemaVersionDAO = new SchemaVersionDAO
-                    ( session
-                    , keyspace
-                    , MigrationVersion.CURRENT.getTable());
+            SchemaVersionDAO schemaVersionDAO = createSchemaVersionDao(session);
             Migrate migrate = new Migrate
                     ( migrationResolver
                     , configs.getTarget()
@@ -86,29 +83,28 @@ public class CassandraMigration {
     }
 
     public MigrationInfoService info() {
-        return execute(new Action<MigrationInfoService>() {
-            public MigrationInfoService execute(Session session) {
-                MigrationResolver migrationResolver = createMigrationResolver();
-                SchemaVersionDAO schemaVersionDAO = new SchemaVersionDAO(session, keyspace, MigrationVersion.CURRENT.getTable());
-                MigrationInfoService migrationInfoService =
-                        new MigrationInfoService(migrationResolver, schemaVersionDAO, configs.getTarget(), false, true);
-                migrationInfoService.refresh();
-
-                return migrationInfoService;
-            }
+        return execute((Session session) -> {
+            MigrationResolver migrationResolver = createMigrationResolver();
+            SchemaVersionDAO schemaVersionDAO = createSchemaVersionDao(session);
+            MigrationInfoService migrationInfoService = new MigrationInfoService
+                                   (migrationResolver, schemaVersionDAO, configs.getTarget(), false, true);
+            migrationInfoService.refresh();
+            
+            return migrationInfoService;
         });
     }
 
+    private SchemaVersionDAO createSchemaVersionDao(Session session) {
+        return new SchemaVersionDAO(session, keyspace, MigrationVersion.CURRENT.getTable());
+    }
+
     public void validate() {
-    	String validationError = execute(new Action<String>() {
-    		@Override
-    		public String execute(Session session) {
-    			MigrationResolver migrationResolver = createMigrationResolver();
-    			SchemaVersionDAO schemaVersionDao = new SchemaVersionDAO(session, keyspace, MigrationVersion.CURRENT.getTable());
-    			Validate validate = new Validate(migrationResolver, schemaVersionDao, configs.getTarget(), true, false);
-    			return validate.run();
-    		}
-    	});
+    	String validationError = execute((Session session) -> {
+            MigrationResolver migrationResolver = createMigrationResolver();
+            SchemaVersionDAO schemaVersionDao = createSchemaVersionDao(session);
+            Validate validate = new Validate(migrationResolver, schemaVersionDao, configs.getTarget(), true, false);
+            return validate.run();
+        });
     
     	if (validationError != null) {
     		throw new CassandraMigrationException("Validation failed. " + validationError);
