@@ -30,7 +30,7 @@ public abstract class AbstractCassandraTest {
     public static void beforeSuite() throws Exception {
         setupCassandraStorageDir();
         EmbeddedCassandraServerHelper.startEmbeddedCassandra(
-                "cassandra-unit.yaml",
+                "/cassandra-unit.yaml", // Only a root is allowed for tests?
                 "target/embeddedCassandra",
                 TIMEOUT.getMilliseconds());
     }
