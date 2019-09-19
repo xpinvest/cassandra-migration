@@ -96,7 +96,6 @@ public class Migrate {
         return migrationSuccessCount;
     }
     
-    
     /** Returns a simple name of the migration script */
     private String getSimpleMigrationScriptName(final MigrationInfo migration) {
         final String name = migration.getScript();
@@ -115,7 +114,7 @@ public class Migrate {
 
     private MigrationVersion applyMigration(final MigrationInfo migration, boolean isOutOfOrder) {
         final MigrationVersion version = migration.getVersion();        
-        final String msg = String.format("Migrating keyspace '%s' to version %s (%s)- %s %s",
+        final String msg = String.format("Migrating keyspace '%s' to version %s (%s) - %s %s",
                 schemaVersionDAO.getKeyspace().getName(),
                 version,
                 getSimpleMigrationScriptName(migration),
@@ -132,7 +131,7 @@ public class Migrate {
             try {
                 migrationExecutor.execute(session);
             } catch (Exception e) {
-                throw new CassandraMigrationException("Unable to apply migration", e);
+                throw new CassandraMigrationException("Unable to apply migration " + getSimpleMigrationScriptName(migration), e);
             }
             LOG.debug("Successfully completed and committed migration of keyspace " +
                     schemaVersionDAO.getKeyspace().getName() + " to version " + version);
