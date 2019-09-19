@@ -107,7 +107,7 @@ public class Migrate {
                 return name.substring(i + 1);
             case JAVA_DRIVER:
                 final int j = name.lastIndexOf('.');
-                return name.substring(j + 1);
+                return name.substring(j + 1) + ".java";
             default:
                 return name;
         }        
