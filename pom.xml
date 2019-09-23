@@ -4,7 +4,7 @@
   <groupId>cz.xpgroup</groupId>
   <artifactId>cassandra-migration</artifactId>
   <name>XP Cassandra Migration</name>
-  <version>0.13</version>
+  <version>0.14</version>
   <description>Database migration tool for Cassandra forked from https://github.com/elo7/cassandra-migration/
   </description>
   <url>https://github.com/xpinvest/cassandra-migration</url>
@@ -33,10 +33,6 @@
       <name>Pavel Ponec</name>
     </developer>
   </developers>
-
-  <prerequisites>
-    <maven>3.0.0</maven>
-  </prerequisites>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
