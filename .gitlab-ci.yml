@@ -28,7 +28,9 @@ release new version:
   stage: release
   script:
     - printenv
-    - git remote set-url origin https://xp-bot-gitrw:$XP_TOKEN@gitlab.xpgroup.cz/backend/cassandra-migration.git
+    - git config --global user.email "xp-bot@xpgroup.cz"
+    - git config --global user.name "xp-bot"
+    - git remote set-url origin https://$TOKEN_NAME:$TOKEN_VALUE@gitlab.xpgroup.cz/backend/cassandra-migration.git
     - git fetch
     - mvn -B clean gitflow:release
   only:
