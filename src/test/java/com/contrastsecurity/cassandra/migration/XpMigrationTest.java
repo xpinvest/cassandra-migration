@@ -21,7 +21,9 @@ public class XpMigrationTest extends AbstractCassandraTest {
      * Test of init method, of class FlywayServiceImpl.
      */
     public void migrate() {
-        String[] scriptsLocations = {"migration/integ", "migration/integ/java"};
+        String[] scriptsLocations = {
+            "migration/integ", 
+            "migration/integ/java"};
 
         KeyspaceConfig keyspace = getKeyspace();
         CassandraMigration cm = new CassandraMigration();
