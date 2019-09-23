@@ -1,0 +1,69 @@
+image: docker:latest
+services:
+  - docker:dind
+
+cache:
+  paths:
+    - .m2/
+
+variables:
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+  GIT_STRATEGY: clone
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2"
+
+stages:
+  - test
+  - release
+  - deploy
+
+maven test:
+  image: maven:3.6.1-jdk-8
+  stage: test
+  script:
+   - "mvn test -B"
+
+release new version:
+  image: maven:3.6.1-jdk-8
+  stage: release
+  script:
+    - git config --global user.email "gitlab@xpgroup.cz"
+    - git config --global user.name "gitlab-ci"
+    - git remote set-url origin git@gitlab.xpgroup.cz:backend/cassandra-migration/.git
+    - mkdir -p ~/.ssh
+    - echo "$SSH"  > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -p 22031 gitlab.xpgroup.cz >> ~/.ssh/known_hosts
+    - echo "Host gitlab.xpgroup.cz" > ~/.ssh/config
+    - echo "       Port 22031" >> ~/.ssh/config
+    - mvn -B clean gitflow:release
+  only:
+    - develop
+  except:
+    variables:
+      - $CI_COMMIT_TITLE == "update for next development version"
+
+release and install:
+  image: maven:3.6.1-jdk-8
+  stage: deploy
+  before_script:
+    - echo '<?xml version="1.0" encoding="UTF-8"?>
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+              <!-- myMavenRepo -->
+              <server>
+                <id>mymavenrepo</id>
+                <username>myMavenRepo</username>'> $HOME/.m2/settings.xml
+    - echo "<password>$MVN_PASS</password>
+              </server>
+            </servers>
+            </settings>" > $HOME/.m2/settings.xml
+  artifacts:
+   paths:
+    - "*/*.jar"
+   expire_in: 3 mos
+  script:
+    - mvn deploy
+  only:
+    - master
