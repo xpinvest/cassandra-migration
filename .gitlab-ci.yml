@@ -29,7 +29,7 @@ release new version:
   script:
     - git config --global user.email "gitlab@xpgroup.cz"
     - git config --global user.name "gitlab-ci"
-    - git remote set-url origin git@gitlab.xpgroup.cz:backend/cassandra-migration/.git
+    - git remote set-url origin git@gitlab.xpgroup.cz:backend/cassandra-migration.git
     - mkdir -p ~/.ssh
     - echo "$SSH"  > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
