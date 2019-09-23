@@ -27,11 +27,9 @@ release new version:
   image: maven:3.6.1-jdk-8
   stage: release
   script:
-    - printenv
     - git config --global user.email "xp-bot@xpgroup.cz"
     - git config --global user.name "xp-bot"
-    - git remote set-url origin https://$TOKEN_NAME:$TOKEN_VALUE@gitlab.xpgroup.cz/backend/cassandra-migration.git
-    - git fetch
+    - git remote set-url origin https://$TOKEN_NAME:$TOKEN_VALUE@$CI_SERVER_HOST/$CI_PROJECT_PATH.git
     - mvn -B clean gitflow:release
   only:
     - develop
