@@ -27,10 +27,9 @@ release new version:
   image: maven:3.6.1-jdk-8
   stage: release
   script:
-    - git config --global user.email "xp-bot@xpgroup.cz"
-    - git config --global user.name "xp-bot"
-    - git config --global user.password "$BOT_PASS"
-    - git remote set-url origin https://gitlab.xpgroup.cz/backend/cassandra-migration.git
+    - printenv
+    - git remote set-url origin https://xp-bot-gitrw:$XP_TOKEN@gitlab.xpgroup.cz/backend/cassandra-migration.git
+    - git fetch
     - mvn -B clean gitflow:release
   only:
     - develop
