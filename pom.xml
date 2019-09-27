@@ -4,7 +4,7 @@
   <groupId>cz.xpgroup</groupId>
   <artifactId>cassandra-migration</artifactId>
   <name>XP Cassandra Migration</name>
-  <version>0.18-SNAPSHOT</version>
+  <version>0.18</version>
   <description>Database migration tool for Cassandra forked from https://github.com/elo7/cassandra-migration/
   </description>
   <url>https://github.com/xpinvest/cassandra-migration</url>
