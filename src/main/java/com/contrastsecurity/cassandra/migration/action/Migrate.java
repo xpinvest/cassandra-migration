@@ -96,12 +96,34 @@ public class Migrate {
         return migrationSuccessCount;
     }
 
-    private MigrationVersion applyMigration(final MigrationInfo migration, boolean isOutOfOrder) {
-        MigrationVersion version = migration.getVersion();
-        LOG.info("Migrating keyspace " + schemaVersionDAO.getKeyspace().getName() + " to version " + version + " - " + migration.getDescription() +
-                (isOutOfOrder ? " (out of order)" : ""));
+    /** Returns a simple name of the migration script */
+    protected String getSimpleMigrationScriptName(final MigrationInfo migration) {
+        final String name = migration.getScript();
 
-        StopWatch stopWatch = new StopWatch();
+        switch (migration.getType()) {
+            case CQL:
+                final int i = name.lastIndexOf('/');
+                return name.substring(i + 1);
+            case JAVA_DRIVER:
+                final int j = name.lastIndexOf('.');
+                return name.substring(j + 1) + ".java";
+            default:
+                return name;
+        }
+    }
+
+    private MigrationVersion applyMigration(final MigrationInfo migration, boolean isOutOfOrder) {
+        final MigrationVersion version = migration.getVersion();
+        final String msg = String.format("Migrating keyspace '%s' to version %s (%s) - %s %s",
+                schemaVersionDAO.getKeyspace().getName(),
+                version,
+                getSimpleMigrationScriptName(migration),
+                migration.getDescription(),
+                isOutOfOrder ? "(out of order)" : ""
+        );
+        LOG.info(msg);
+
+        final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         try {
@@ -109,7 +131,7 @@ public class Migrate {
             try {
                 migrationExecutor.execute(session);
             } catch (Exception e) {
-                throw new CassandraMigrationException("Unable to apply migration", e);
+                throw new CassandraMigrationException("Unable to apply migration " + getSimpleMigrationScriptName(migration), e);
             }
             LOG.debug("Successfully completed and committed migration of keyspace " +
                     schemaVersionDAO.getKeyspace().getName() + " to version " + version);
