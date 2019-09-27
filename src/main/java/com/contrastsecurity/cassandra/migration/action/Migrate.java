@@ -95,11 +95,11 @@ public class Migrate {
 
         return migrationSuccessCount;
     }
-    
+
     /** Returns a simple name of the migration script */
-    private String getSimpleMigrationScriptName(final MigrationInfo migration) {
+    protected String getSimpleMigrationScriptName(final MigrationInfo migration) {
         final String name = migration.getScript();
-        
+
         switch (migration.getType()) {
             case CQL:
                 final int i = name.lastIndexOf('/');
@@ -109,11 +109,11 @@ public class Migrate {
                 return name.substring(j + 1) + ".java";
             default:
                 return name;
-        }        
+        }
     }
 
     private MigrationVersion applyMigration(final MigrationInfo migration, boolean isOutOfOrder) {
-        final MigrationVersion version = migration.getVersion();        
+        final MigrationVersion version = migration.getVersion();
         final String msg = String.format("Migrating keyspace '%s' to version %s (%s) - %s %s",
                 schemaVersionDAO.getKeyspace().getName(),
                 version,
